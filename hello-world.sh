@@ -6,5 +6,5 @@ echo "present working directory: $PWD"
 echo "User name in script: $USER"
 echo "Home directory: $HOME"
 echo "Process ID: $$"
-sleep 15
+sleep 15 &
 echo "Last process ID: $!"
