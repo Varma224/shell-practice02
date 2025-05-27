@@ -9,7 +9,7 @@ else
     echo "You are running script with root access"
 fi
 
-dnf install mysql -y
+dnf install jqajuauj -y
 
 if [ $? -eq 0 ]; then
     echo "Installing MYSQL is success"
