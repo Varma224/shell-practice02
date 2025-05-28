@@ -29,7 +29,7 @@ if [ $? -eq 0 ]; then
 else
     echo "MYSQL is not installed going to install it"
     dnf install mysql -y
-    VALIDATE $? "MYSQL""
+    VALIDATE $? "MYSQL"
 fi
 
 dnf list installed python3
@@ -51,5 +51,4 @@ else
     echo "nginx is not installed going to install it"
     dnf install nginx -y
     VALIDATE $? "nginx"
-
 fi
