@@ -1,18 +1,22 @@
 #!/bin/bash
 
 USERID=$(id -u)
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
 
 VALIDATE() {
     if [ $1 -eq 0 ]; then
-        echo "Installing $2 is success"
+        echo "Installing $2 is $G success $N"
     else
-        echo "Installing $2 is failure"
+        echo "Installing $2 is $R failure $N "
         exit 1
     fi
 }
 
 if [ $USERID -ne 0 ]; then
-    echo "ERROR: Please run this script with root access"
+    echo "$R ERROR: Please run this script with root access $N"
     exit 1
 else
     echo "You are running script with root access"
@@ -25,7 +29,7 @@ if [ $? -eq 0 ]; then
 else
     echo "MYSQL is not installed going to install it"
     dnf install mysql -y
-    VALIDATE $? "MYSQL"
+    VALIDATE $? "MYSQL""
 fi
 
 dnf list installed python3
