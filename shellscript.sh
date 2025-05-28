@@ -8,15 +8,15 @@ N="\e[0m"
 
 VALIDATE() {
     if [ $1 -eq 0 ]; then
-        echo "Installing $2 is $G success $N"
+        echo -e "Installing $2 is $G success $N"
     else
-        echo "Installing $2 is $R failure $N "
+        echo -e "Installing $2 is $R failure $N "
         exit 1
     fi
 }
 
 if [ $USERID -ne 0 ]; then
-    echo "$R ERROR: Please run this script with root access $N"
+    echo -e "$R ERROR: Please run this script with root access $N"
     exit 1
 else
     echo "You are running script with root access"
