@@ -22,7 +22,7 @@ VALIDATE() {
 }
 
 if [ $USERID -ne 0 ]; then
-    echo -e "$R ERROR: Please run this script with root access $N" &>>$LOG_FILE
+    echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
     exit 1
 else
     echo "You are running script with root access" &>>$LOG_FILE
@@ -41,9 +41,9 @@ fi
 dnf list installed python3 &>>$LOG_FILE
 
 if [ $? -eq 0 ]; then
-    echo "Python3 is already installed" &>>$LOG_FILE
+    echo "Python3 is already installed" | tee -a $LOG_FILE
 else
-    echo "python3 is not installed going to install it" &>>$LOG_FILE
+    echo "python3 is not installed going to install it" | tee -a $LOG_FILE
     dnf install python3 -y &>>$LOG_FILE
     VALIDATE $? "python3"
 
@@ -52,9 +52,9 @@ fi
 dnf list installed nginx &>>$LOG_FILE
 
 if [ $? -eq 0 ]; then
-    echo "nginx is already installed" &>>$LOG_FILE
+    echo "nginx is already installed" | tee -a $LOG_FILE
 else
-    echo "nginx is not installed going to install it" &>>$LOG_FILE
+    echo "nginx is not installed going to install it" | tee -a $LOG_FILE
     dnf install nginx -y &>>$LOG_FILE
     VALIDATE $? "nginx"
 fi
