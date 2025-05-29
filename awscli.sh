@@ -7,9 +7,8 @@ INSTANCES=("frontend" "redis" "mongodb" "cart" "shipping" "catalogue" "user" "my
 
 for instance in ${INSTANCES[@]}; do
   INSTANCE_ID=$(
-    aws ec2 run-instances --image-id ami-09c813fb71547fc4f --instance-type t2.micro
-    --security-group-ids sg-0c83d4f49209ee12d --query "Reservations[0].Instances[0].InstanceID"
-    --output text
+    aws ec2 run-instances --image-id ami-09c813fb71547fc4f --instance-type t2.micro --security-group-ids sg-0c83d4f49209ee12d
+    --query "Instances[0].InstanceID" --output text
   )
   if [ $instance != "frontend" ]; then
     IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PrivateIpAddress" --output text)
