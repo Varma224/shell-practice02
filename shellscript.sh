@@ -12,6 +12,13 @@ LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 mkdir -p $LOGS_FOLDER
 echo "script started executing at : $(date)" &>>$LOG_FILE
 
+if [ $USERID -ne 0 ]; then
+    echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
+    exit 1
+else
+    echo "You are running script with root access" | tee -a $LOG_FILE
+fi
+
 VALIDATE() {
     if [ $1 -eq 0 ]; then
         echo -e "Installing $2 is $G success $N" &>>$LOG_FILE
@@ -20,13 +27,6 @@ VALIDATE() {
         exit 1
     fi
 }
-
-if [ $USERID -ne 0 ]; then
-    echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
-    exit 1
-else
-    echo "You are running script with root access" &>>$LOG_FILE
-fi
 
 dnf list installed mysql &>>LOG_FILE
 
