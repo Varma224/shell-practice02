@@ -11,10 +11,13 @@ for instance in ${INSTANCES[@]}; do
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name, Value=$instance}]"
     --query "Instances[0].InstanceID" --output text
   )
+  echo $INSTANCE_ID
   if [ $instance != "frontend" ]; then
     IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PrivateIpAddress" --output text)
+    echo $IP
   else
     IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+    echo $IP
   fi
   echo "$instance Ip address is $IP"
 done
