@@ -13,9 +13,9 @@ for instance in ${INSTANCES[@]}; do
   )
 
   if [ $instance != "frontend" ]; then
-    IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Instances[0].PrivateIpAddress" --output text)
+    IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "$instance.PrivateIpAddress" --output text)
   else
-    IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Instances[0].PublicIpAddress" --output text)
+    IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "$instance.PublicIpAddress" --output text)
   fi
   echo "$instance Ip address is $IP"
 done
