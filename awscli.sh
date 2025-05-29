@@ -8,6 +8,7 @@ INSTANCES=("frontend" "redis" "mongodb" "cart" "shipping" "catalogue" "user" "my
 for instance in ${INSTANCES[@]}; do
   INSTANCE_ID=$(
     aws ec2 run-instances --image-id ami-09c813fb71547fc4f --instance-type t2.micro --security-group-ids sg-0c83d4f49209ee12d
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]"
     --query "Instances[0].InstanceID" --output text
   )
   if [ $instance != "frontend" ]; then
