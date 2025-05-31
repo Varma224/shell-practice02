@@ -73,10 +73,15 @@ VALIDATE $? "Enabling and starting shipping"
 dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Installing mysql"
 
-mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/schema.sql &>>$LOG_FILE
-mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/app-user.sql &>>$LOG_FILE
-mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/master-data.sql &>>$LOG_FILE
-VALIDATE $? "Load data into Mysql"
+mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD -e 'use cities'
+if [ $? -ne 0 ]; then
+    mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/schema.sql &>>$LOG_FILE
+    mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/app-user.sql &>>$LOG_FILE
+    mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/master-data.sql &>>$LOG_FILE
+    VALIDATE $? "Load data into Mysql"
+else
+    echo "Data is already loaded .... $Y SKIPPING $N"
+fi
 
 systemctl restart shipping
 VALIDATE $? "Restart shipping"
