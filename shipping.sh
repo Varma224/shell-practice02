@@ -13,15 +13,15 @@ SCRIPT_DIR=$PWD
 mkdir -p $LOGS_FOLDER
 echo "script started executing at : $(date)" | tee -a $LOG_FILE
 
-echo "Please enter root password to setup"
-read -s MYSQL_ROOT_PASSWORD
-
 if [ $USERID -ne 0 ]; then
     echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
     exit 1
 else
     echo "You are running script with root access" | tee -a $LOG_FILE
 fi
+
+echo "Please enter root password to setup"
+read -s MYSQL_ROOT_PASSWORD
 
 VALIDATE() {
     if [ $1 -eq 0 ]; then
