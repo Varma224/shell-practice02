@@ -80,7 +80,7 @@ if [ $? -ne 0 ]; then
     mysql -h mysql.deeps.sbs -uroot -p$MYSQL_ROOT_PASSWORD </app/db/master-data.sql &>>$LOG_FILE
     VALIDATE $? "Load data into Mysql"
 else
-    echo "Data is already loaded .... $Y SKIPPING $N"
+    echo -e "Data is already loaded .... $Y SKIPPING $N"
 fi
 
 systemctl restart shipping
