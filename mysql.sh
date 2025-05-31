@@ -1,6 +1,5 @@
-#!/bin/bash
-
 START_TIME=$(date +%s)
+
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -21,6 +20,9 @@ else
     echo "You are running script with root access" | tee -a $LOG_FILE
 fi
 
+echo "Please enter root password to setup"
+read -s MYSQL_ROOT_PASSWORD
+
 VALIDATE() {
     if [ $1 -eq 0 ]; then
         echo -e "$2 is $G success $N" | tee -a $LOG_FILE
@@ -30,25 +32,19 @@ VALIDATE() {
     fi
 }
 
-dnf module disable redis -y &>>$LOG_FILE
-VALIDATE $? "Disabling default redis repo"
+dnf install mysql-server -y &>>$LOG_FILE
+VALIDATE $? "Installing MYSQL server"
 
-dnf module enable redis:7 -y &>>$LOG_FILE
-VALIDATE $? "Enabling redis repo"
+systemctl enable mysqld &>>$LOG_FILE
+VALIDATE $? "Enabling MYSQL"
 
-dnf install redis -y &>>$LOG_FILE
-VALIDATE $? "Installing redis"
+systemctl start mysqld &>>$LOG_FILE
+VALIDATE $? "Starting MYSQL"
 
-sed -i -e 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf
-VALIDATE $? "Editing redis file"
+mysql_secure_installation --set-root-pass $MYSQL_ROOT_PASSWORD &>>$LOG_FILE
+VALIDATE $? "Setting MYSQL root password"
 
-systemctl enable redis &>>$LOG_FILE
-VALIDATE $? "Enabling redis"
-
-systemctl start redis &>>$LOG_FILE
-VALIDATE $? "Started redis"
-
-END_TIME=$(date +%s) &>>$LOG_FILE
+END_TIME=$(date +%s)
 TOTAL_TIME=$(($END_TIME - $START_TIME))
 
 echo -e "Script execution completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
