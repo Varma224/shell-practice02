@@ -1,5 +1,6 @@
 #!/bin/bash
 
+START_TIME=$(date +%s)
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -37,3 +38,17 @@ VALIDATE $? "Enabling redis repo"
 
 dnf install redis -y >>$LOG_FILE
 VALIDATE $? "Installing redis"
+
+sed -i -e 's/127.0.0.1/0.0.0.0/g' -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf
+VALIDATE $? "Editing redis file"
+
+systemctl enable redis >>$LOG_FILE
+VALIDATE $? "Enabling redis"
+
+systemctl start redis >>$LOG_FILE
+VALIDATE $? "Started redis"
+
+END_TIME=$(date +%s) >>$LOG_FILE
+TOTAL_TIME=$(($END_TIME - $START_TIME))
+
+echo -e "Script execution completed successfully, $Y time taken: $TOTAL_TIME $N" | tee -a $LOG_FILE
