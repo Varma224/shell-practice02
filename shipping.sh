@@ -13,6 +13,9 @@ SCRIPT_DIR=$PWD
 mkdir -p $LOGS_FOLDER
 echo "script started executing at : $(date)" | tee -a $LOG_FILE
 
+echo "Please enter root password to setup"
+read -s MYSQL_ROOT_PASSWORD
+
 if [ $USERID -ne 0 ]; then
     echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
     exit 1
@@ -70,9 +73,9 @@ VALIDATE $? "Enabling and starting shipping"
 dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Installing mysql"
 
-mysql -h mysql.deeps.sbs -uroot -pRoboShop@1 </app/db/schema.sql &>>$LOG_FILE
-mysql -h mysql.deeps.sbs -uroot -pRoboShop@1 </app/db/app-user.sql &>>$LOG_FILE
-mysql -h mysql.deeps.sbs -uroot -pRoboShop@1 </app/db/master-data.sql &>>$LOG_FILE
+mysql -h mysql.deeps.sbs -uroot MYSQL_ROOT_PASSWORD </app/db/schema.sql &>>$LOG_FILE
+mysql -h mysql.deeps.sbs -uroot MYSQL_ROOT_PASSWORD </app/db/app-user.sql &>>$LOG_FILE
+mysql -h mysql.deeps.sbs -uroot MYSQL_ROOT_PASSWORD </app/db/master-data.sql &>>$LOG_FILE
 VALIDATE $? "Load data into Mysql"
 
 systemctl restart shipping
