@@ -53,3 +53,8 @@ VALIDATE $? "unzipping payment"
 
 pip3 install -r requirements.txt
 VALIDATE $? "Installing dependencies"
+
+systemctl daemon-reload &>>$LOG_FILE
+systemctl enable payment &>>$LOG_FILE
+systemctl start payment &>>$LOG_FILE
+VALIDATE $? "Starting payment"
