@@ -1,4 +1,5 @@
 #!/bin/bash
+START_TIME=$(date +%s)
 
 USERID=$(id -u)
 R="\e[31m"
@@ -65,3 +66,8 @@ VALIDATE $? "Enabling payment"
 
 systemctl start payment &>>$LOG_FILE
 VALIDATE $? "Starting payment"
+
+END_TIME=$(date +%s) >>$LOG_FILE
+TOTAL_TIME=$(($END_TIME - $START_TIME))
+
+echo -e "Script execution completed successfully, $Y time taken: $TOTAL_TIME seconds $N" | tee -a $LOG_FILE
