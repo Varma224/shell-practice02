@@ -29,7 +29,7 @@ VALIDATE() {
     fi
 }
 
-dnf install python3 gcc python3-devel -y
+dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installing python3 server"
 
 id roboshop
@@ -51,13 +51,17 @@ cd /app
 unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "unzipping payment"
 
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt &>>$LOG_FILE
 VALIDATE $? "Installing dependencies"
 
 cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service
 VALIDATE $? "Copying payment service"
 
 systemctl daemon-reload &>>$LOG_FILE
+VALIDATE $? "Daemon reload"
+
 systemctl enable payment &>>$LOG_FILE
+VALIDATE $? "Enabling payment"
+
 systemctl start payment &>>$LOG_FILE
 VALIDATE $? "Starting payment"
