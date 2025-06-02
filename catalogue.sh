@@ -1,5 +1,5 @@
 source ./common.sh
-app_name=mongodb
+app_name=catalogue
 
 check_root
 app_setup
