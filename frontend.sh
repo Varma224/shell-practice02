@@ -36,3 +36,5 @@ VALIDATE $? "copying nginx.conf"
 
 systemctl restart nginx &>>$LOG_FILE
 VALIDATE $? "Restarting nginx"
+
+print_time
