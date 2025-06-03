@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./common.sh
-app_name=shipping
+app_name=rabbitmq
 
 check_root
 
