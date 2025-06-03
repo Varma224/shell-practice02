@@ -1,6 +1,6 @@
 #!/bin/bash
 source ./common.sh
-app_name=frontend
+app_name=shipping
 
 check_root
 echo "Please enter root password to setup"
