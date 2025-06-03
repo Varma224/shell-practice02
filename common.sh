@@ -38,9 +38,6 @@ maven_setup() {
 
     mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
     VALIDATE $? "Moving and renaming jar file "
-
-    cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
-    VALIDATE $? "copying shipping.service"
 }
 
 systemd_setup() {
