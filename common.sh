@@ -34,8 +34,7 @@ python_setup() {
     VALIDATE $? "Installing python3 server"
     pip3 install -r requirements.txt &>>$LOG_FILE
     VALIDATE $? "Installing dependencies"
-    cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service
-    VALIDATE $? "Copying payment service"
+
 }
 
 maven_setup() {
@@ -53,7 +52,6 @@ maven_setup() {
 systemd_setup() {
     cp $SCRIPT_DIR/$app_name.service /etc/systemd/system/$app_name.service
     VALIDATE $? "Copying $app_name service"
-
     systemctl daemon-reload &>>$LOG_FILE
     systemctl enable $app_name &>>$LOG_FILE
     systemctl start $app_name &>>$LOG_FILE
