@@ -12,25 +12,6 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-check_root
-mkdir -p $LOGS_FOLDER
-
-USAGE(){
- 
- echo -e "$R USAGE:: $N sh backup.sh <source-dir> <destination-dir> <days(optional)> 
-}
-
-
-
-if [ $# -lt 2 ]; then
-    USAGE
-fi
-
-
-
-
-
-
 VALIDATE() {
     if [ $1 -eq 0 ]; then
         echo -e "$2 is $G success $N" | tee -a $LOG_FILE
@@ -48,3 +29,14 @@ check_root() {
         echo "You are running script with root access" | tee -a $LOG_FILE
     fi
 }
+
+check_root
+mkdir -p $LOGS_FOLDER
+
+USAGE() {
+    echo -e "$R USAGE:: $N sh backup.sh <source-dir> <destination-dir> <days(optional)>"
+}
+
+if [ $# -lt 2 ]; then
+    USAGE
+fi
