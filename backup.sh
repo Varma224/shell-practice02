@@ -53,7 +53,7 @@ fi
 
 FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
 
-if [ ! -z $FILES ]; then
+if [ ! -z "$FILES" ]; then
     echo " Files to ZIP are : $FILES"
     TIMESTAMP=$(date +%F-%H-%M-%S)
     ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.ZIP"
