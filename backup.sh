@@ -57,7 +57,7 @@ if [ ! -z "$FILES" ]; then
     echo " Files to ZIP are : $FILES"
     TIMESTAMP=$(date +%F-%H-%M-%S)
     ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.ZIP"
-    echo $FILES | zip -@ $ZIP_FILE
+    echo "$FILES" | zip -@ $ZIP_FILE
     if [ -f $ZIP_FILE ]; then
         echo "Successfully created zip files"
         while IFS= read -r filepath; do
