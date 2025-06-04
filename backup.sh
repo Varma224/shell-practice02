@@ -30,8 +30,8 @@ check_root() {
     fi
 }
 
-check_root
 mkdir -p $LOGS_FOLDER
+check_root
 
 USAGE() {
     echo -e "$R USAGE:: $N sh backup.sh <source-dir> <destination-dir> <days(optional)>"
@@ -39,6 +39,7 @@ USAGE() {
 
 if [ $# -lt 2 ]; then
     USAGE
+    exit 1
 fi
 
 if [ ! -d $SOURCE_DIR ]; then
@@ -51,25 +52,26 @@ if [ ! -d $DEST_DIR ]; then
     exit 1
 fi
 
-FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
+readarray -t FILES < <(find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS")
 
-if [ ! -z "$FILES" ]; then
-    echo " Files to ZIP are : $FILES"
+if [ ${#FILES[@]} -gt 0 ]; then
+    echo " Files to ZIP are : ${FILES[*]}"
     TIMESTAMP=$(date +%F-%H-%M-%S)
     ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.ZIP"
-    echo "$FILES" | zip -@ $ZIP_FILE
-    if [ -f $ZIP_FILE ]; then
-        echo "Successfully created zip files"
-        while IFS= read -r filepath; do
-            echo "Deleting files : $filepath" | tee -a $LOG_FILE
-            rm -rf "$filepath"
-        done <<<"$FILES"
-        echo -e "Log files older than $DAYS are deleted from source directory  ..$Y SUCCESS $N"
 
+    printf "%s\n" "${FILES[@]}" | zip -@ "$ZIP_FILE"
+    VALIDATE $? "Zipping files"
+
+    if [ -f "$ZIP_FILE" ]; then
+        for filepath in "${FILES[@]}"; do
+            echo "Deleting file: $filepath" | tee -a "$LOG_FILE"
+            rm -f "$filepath"
+        done
+        echo -e "Log files older than $DAYS days are deleted from source directory..$Y SUCCESS $N"
     else
-        echo -e "Zip file creation ... $R FAILURE $N"
+        echo -e "Zip file creation... $R FAILURE $N"
         exit 1
     fi
 else
-    echo -e "No files found older than 14 days....$Y SKIPPING $N"
+    echo -e "No files found older than $DAYS days....$Y SKIPPING $N"
 fi
