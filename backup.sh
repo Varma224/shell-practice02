@@ -1,9 +1,10 @@
 #!/bin/bash
-
 USERID=$(id -u)
 SOURCE_DIR=$1
 DEST_DIR=$2
 DAYS=${3:-14}
+LOGS_FOLDER="/var/log/roboshop-logs"
+SCRIPT_NAME=$(basename $0 | cut -d "." -f1)
 FILES_LIST="/tmp/files-to-zip.txt"
 
 R="\e[31m"
@@ -13,19 +14,19 @@ N="\e[0m"
 
 VALIDATE() {
     if [ $1 -eq 0 ]; then
-        echo -e "$2 is $G success $N"
+        echo -e "$2 is $G success $N" | tee -a $LOG_FILE
     else
-        echo -e "$2 is $R failure $N "
+        echo -e "$2 is $R failure $N " | tee -a $LOG_FILE
         exit 1
     fi
 }
 
 check_root() {
     if [ $USERID -ne 0 ]; then
-        echo -e "$R ERROR: Please run this script with root access $N"
+        echo -e "$R ERROR: Please run this script with root access $N" | tee -a $LOG_FILE
         exit 1
     else
-        echo "You are running script with root access"
+        echo "You are running script with root access" | tee -a $LOG_FILE
     fi
 }
 
@@ -41,24 +42,24 @@ if [ $# -lt 2 ]; then
 fi
 
 if [ ! -d $SOURCE_DIR ]; then
-    echo -e "$R Source directory $SOURCE_DIR does not exist. Please check $N"
+    echo -e "$R Source directory $SOURCE_DIR does not exist. Please check $N" | tee -a $LOG_FILE
     exit 1
 fi
 
 if [ ! -d $DEST_DIR ]; then
-    echo -e "$R Destination directory $DEST_DIR does not exist. Please check $N"
+    echo -e "$R Destination directory $DEST_DIR does not exist. Please check $N" | tee -a $LOG_FILE
     exit 1
 fi
 
 # Step 1: Ensure FILES_LIST is not a directory and is empty
 if [ -d "$FILES_LIST" ]; then
-    echo -e "$R ERROR: $FILES_LIST is a directory. Removing it to continue... $N"
+    echo -e "$R ERROR: $FILES_LIST is a directory. Removing it to continue... $N" | tee -a $LOG_FILE
     rm -r "$FILES_LIST"
 fi
 : >"$FILES_LIST"
 
 # Now safely find and store file paths
-find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST"
+find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST" | tee -a $LOG_FILE
 
 # Step 2: Check if any files were found
 if [ -s "$FILES_LIST" ]; then
@@ -72,21 +73,21 @@ if [ -s "$FILES_LIST" ]; then
     zip -@ "$ZIP_FILE" <"$FILES_LIST"
 
     if [ -f "$ZIP_FILE" ]; then
-        echo "Successfully created zip file: $ZIP_FILE"
+        echo "Successfully created zip file: $ZIP_FILE" | tee -a $LOG_FILE
 
         # Step 4: Delete each original file listed
         while IFS= read -r filepath; do
-            echo "Deleting file: $filepath"
-            rm -f "$filepath"
+            echo "Deleting file: $filepath" | tee -a $LOG_FILE
+            rm -f "$filepath" | tee -a $LOG_FILE
         done <"$FILES_LIST"
 
-        echo "Deleted log files older than $DAYS days."
+        echo "Deleted log files older than $DAYS days." | tee -a $LOG_FILE
     else
-        echo "Failed to create zip file."
+        echo "Failed to create zip file." | tee -a $LOG_FILE
         exit 1
     fi
 else
-    echo "No log files older than $DAYS days found."
+    echo "No log files older than $DAYS days found." | tee -a $LOG_FILE
 fi
 
 # Step 5: Clean up
