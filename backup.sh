@@ -7,6 +7,8 @@ DAYS=${3:-14}
 LOGS_FOLDER="/var/log/shellscript-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+FILES_LIST="/tmp/files-to-zip.txt"
+
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -52,26 +54,30 @@ if [ ! -d $DEST_DIR ]; then
     exit 1
 fi
 
-FILES=$(find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS")
+mkdir -p /tmp/files-to-zip.txt
 
-if [ -n "$FILES" ]; then
+# Step 1: Find log files older than $DAYS days
+find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST"
+
+# Step 2: Check if any files were found
+if [ -s "$FILES_LIST" ]; then
     echo "Files to ZIP:"
-    echo "$FILES"
+    cat "$FILES_LIST"
 
     TIMESTAMP=$(date +%F-%H-%M-%S)
     ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.ZIP"
 
-    # Pipe the file list to zip
-    echo "$FILES" | zip -@ "$ZIP_FILE"
+    # Step 3: Create a zip archive from the file list
+    zip -@ "$ZIP_FILE" <"$FILES_LIST"
 
     if [ -f "$ZIP_FILE" ]; then
         echo "Successfully created zip file: $ZIP_FILE"
 
-        # Delete each file line by line
+        # Step 4: Delete each original file listed
         while IFS= read -r filepath; do
             echo "Deleting file: $filepath"
             rm -f "$filepath"
-        done <<<"$FILES"
+        done <"$FILES_LIST"
 
         echo "Deleted log files older than $DAYS days."
     else
@@ -81,3 +87,6 @@ if [ -n "$FILES" ]; then
 else
     echo "No log files older than $DAYS days found."
 fi
+
+# Step 5: Clean up
+rm -f "$FILES_LIST"
