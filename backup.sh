@@ -54,7 +54,14 @@ if [ ! -d $DEST_DIR ]; then
     exit 1
 fi
 
-# Step 1: Find log files older than $DAYS days
+# Step 1: Ensure FILES_LIST is not a directory and is empty
+if [ -d "$FILES_LIST" ]; then
+    echo -e "$R ERROR: $FILES_LIST is a directory. Removing it to continue... $N"
+    rm -r "$FILES_LIST"
+fi
+: >"$FILES_LIST"
+
+# Now safely find and store file paths
 find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST"
 
 # Step 2: Check if any files were found
