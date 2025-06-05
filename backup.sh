@@ -61,6 +61,8 @@ if [ -d "$FILES_LIST" ]; then
 fi
 : >"$FILES_LIST"
 
+echo "$FILES_LIST"
+
 # Now safely find and store file paths
 find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST"
 
