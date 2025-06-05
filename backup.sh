@@ -52,26 +52,32 @@ if [ ! -d $DEST_DIR ]; then
     exit 1
 fi
 
-readarray -t FILES < <(find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS")
+FILES=$(find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS")
 
-if [ ${#FILES[@]} -gt 0 ]; then
-    echo " Files to ZIP are : ${FILES[*]}"
+if [ -n "$FILES" ]; then
+    echo "Files to ZIP:"
+    echo "$FILES"
+
     TIMESTAMP=$(date +%F-%H-%M-%S)
     ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.ZIP"
 
-    printf "%s\n" "${FILES[@]}" | zip -@ "$ZIP_FILE"
-    VALIDATE $? "Zipping files"
+    # Pipe the file list to zip
+    echo "$FILES" | zip -@ "$ZIP_FILE"
 
     if [ -f "$ZIP_FILE" ]; then
-        for filepath in "${FILES[@]}"; do
-            echo "Deleting file: $filepath" | tee -a "$LOG_FILE"
+        echo "Successfully created zip file: $ZIP_FILE"
+
+        # Delete each file line by line
+        while IFS= read -r filepath; do
+            echo "Deleting file: $filepath"
             rm -f "$filepath"
-        done
-        echo -e "Log files older than $DAYS days are deleted from source directory..$Y SUCCESS $N"
+        done <<<"$FILES"
+
+        echo "Deleted log files older than $DAYS days."
     else
-        echo -e "Zip file creation... $R FAILURE $N"
+        echo "Failed to create zip file."
         exit 1
     fi
 else
-    echo -e "No files found older than $DAYS days....$Y SKIPPING $N"
+    echo "No log files older than $DAYS days found."
 fi
