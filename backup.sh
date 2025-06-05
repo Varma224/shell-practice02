@@ -6,7 +6,7 @@ DEST_DIR=$2
 DAYS=${3:-14}
 LOGS_FOLDER="/var/log/shellscript-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
-LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+LOG_FILE="$LOGS_FOLDER$SCRIPT_NAME.log"
 FILES_LIST="/tmp/files-to-zip.txt"
 
 R="\e[31m"
@@ -53,8 +53,6 @@ if [ ! -d $DEST_DIR ]; then
     echo -e "$R Destination directory $DEST_DIR does not exist. Please check $N"
     exit 1
 fi
-
-mkdir -p /tmp/files-to-zip.txt
 
 # Step 1: Find log files older than $DAYS days
 find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST"
