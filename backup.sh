@@ -5,7 +5,7 @@ DEST_DIR=$2
 DAYS=${3:-14}
 LOGS_FOLDER="/var/log/roboshop-logs"
 mkdir -p "$LOGS_FOLDER"
-SCRIPT_NAME=$(basename "$0")
+SCRIPT_NAME=$(basename "$0" | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 FILES_LIST="/tmp/files-to-zip.txt"
 
@@ -61,7 +61,7 @@ fi
 : >"$FILES_LIST"
 
 # Now safely find and store file paths
-find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" >"$FILES_LIST" | tee -a $LOG_FILE
+find "$SOURCE_DIR" -name "*.log" -mtime +"$DAYS" | tee -a $LOG_FILE >"$FILES_LIST"
 
 # Step 2: Check if any files were found
 if [ -s "$FILES_LIST" ]; then
