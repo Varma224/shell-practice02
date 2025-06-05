@@ -4,11 +4,10 @@ SOURCE_DIR=$1
 DEST_DIR=$2
 DAYS=${3:-14}
 LOGS_FOLDER="/var/log/roboshop-logs"
+mkdir -p "$LOGS_FOLDER"
 SCRIPT_NAME=$(basename $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 FILES_LIST="/tmp/files-to-zip.txt"
-
-mkdir -p "$LOGS_FOLDER"
 
 R="\e[31m"
 G="\e[32m"
