@@ -9,6 +9,8 @@ SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 FILES_LIST="/tmp/files-to-zip.txt"
 
+mkdir -p $LOGS_FOLDER
+
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -32,7 +34,6 @@ check_root() {
     fi
 }
 
-mkdir -p $LOGS_FOLDER
 check_root
 
 USAGE() {
